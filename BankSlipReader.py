@@ -23,8 +23,6 @@ def tesseractImgtoTxt(filePath):
 
     img = Image.open(filePath)
     textImg = pytesseract.image_to_string(img, lang='eng+tha')
-    textImg.replace(" ", "")
-    print(textImg)
 
 def filterBank():
     try:
@@ -61,7 +59,7 @@ def filterBank():
         pass
 
     try:
-        refID = re.findall(r"\d{8}(?=.*[a-zA-Z])[a-zA-Z0-9]{16,}", textImg)  # spare regex (?!\b\d{25}\b)\b\d{6}[0-9a-zA-z]{19}\b, (?!\b\d{25}\b)\b\d{6}[0-9a-zA-z]{19}\b"
+        refID = re.findall(r"\d{8}(?=.*[a-zA-Z])[a-zA-Z0-9]{16,}", textImg)
         amount = re.findall(r'\d{1,9},\d{1,9}.00', textImg)
 
         print(refID[0])
