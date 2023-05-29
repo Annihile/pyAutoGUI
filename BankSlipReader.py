@@ -23,51 +23,35 @@ def tesseractImgtoTxt(filePath):
 
     img = Image.open(filePath)
     textImg = pytesseract.image_to_string(img, lang='eng+tha')
+    #print(textImg)
 
 def filterBank():
     try:
-        refID = re.findall(r'\b\d{25}\b', textImg)          
-        amount = re.findall(r'\d{1,9},\d{1,9}.00', textImg)
-
-        print(refID[0])
-        print(amount[0])
-        if re.match(r'\b\d{25}\b', refID[0]):
-            print("bangkok")
-    except IndexError:
-        pass
-    
-    try:
-        refID = re.findall(r'\b\d{1,12}[A-Z]{1,3}\d{1,5}\b', textImg)
-        amount = re.findall(r'\d{1,9},\d{1,9}.00', textImg)
-        
-        print(refID[0])
-        print(amount[0])
-        if re.match(r'\d{1,12}[A-Z]{1,3}\d{1,5}', refID[0]):
+        refID = re.search(r'\b\d{1,12}(?=.*[A-Z])[A-Z]{1,3}\d{1,5}\b', textImg)
+        if refID:
             print("kasikorn")
-    except IndexError:
-        pass
-
-    try:
-        refID = re.findall(r'\b\d{16}\b', textImg)
-        amount = re.findall(r'\d{1,9},\d{1,9}.00', textImg)
+        if not refID:
+            refID = re.search(r"\d{8}(?=.*[a-zA-Z])[a-zA-Z0-9]{16,}", textImg)
+            if refID:
+                print("scb")
+        if not refID:
+            refID = re.search(r'\b\d{16}\b', textImg)
+            if refID:
+                print("uob")
+        if not refID:
+            refID = re.search(r'\b\d{25}\b', textImg)
+            if refID:
+                print("bangkok")
         
-        print(refID[0])
-        print(amount[0])
-        if re.match(r'\b\d{16}\b', refID[0]):
-            print("uob")
-    except IndexError:
-        pass
+    except IndexError as e:
+        print("wat")
+    
+    amount = re.search(r'\b\d{1,3}(?:,?\d{3})*\.\d{2}\b', textImg)
 
-    try:
-        refID = re.findall(r"\d{8}(?=.*[a-zA-Z])[a-zA-Z0-9]{16,}", textImg)
-        amount = re.findall(r'\d{1,9},\d{1,9}.00', textImg)
-
-        print(refID[0])
-        print(amount[0])
-        if re.match(r"\d{8}(?=.*[a-zA-Z])[a-zA-Z0-9]{16,}", refID[0]):
-            print("scb")
-    except:
-        pass
+    if refID:
+        print(refID.group())
+    if amount:
+        print(amount.group())
 
 def showText():
     Label(
